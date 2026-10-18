@@ -7,9 +7,6 @@ A static, single-page website presenting our supervised machine-learning project
 - **Results:** Linear Regression RMSE 0.1713, R² 0.9997 (best); Random Forest RMSE 0.2466, R² 0.9995
 - **Key finding:** PM2.5 is the dominant driver of AQI (~88% feature importance)
 
-## Team
-Harsimrat Kaur Kang (1025050134), Bhuvi Sharma (1025050031), Tanishka Yadav (1025050006), Dev Kukreja (1025050126), Vidhaan Mathur (1025050137)
-
 ## Project structure
 ```
 index.html    # the whole site (HTML + CSS + JS, no dependencies)
