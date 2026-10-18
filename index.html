@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="AQI Prediction Model by BASF Group 14: Linear Regression and Random Forest predicting Air Quality Index with R² up to 0.9997 on 175,205 hourly samples.">
+<meta name="description" content="AQI Prediction Model, built by Vidhaan Mathur for the AI for Engineers project: Linear Regression and Random Forest predicting Air Quality Index with R² up to 0.9997 on 175,205 hourly samples.">
 <meta name="theme-color" content="#05080f">
-<meta property="og:title" content="AQI Prediction Model · Group 14">
+<meta property="og:title" content="AQI Prediction Model · Vidhaan Mathur">
 <meta property="og:description" content="Machine-learning AQI prediction from pollutant and weather data. R² 0.9997.">
 <meta property="og:type" content="website">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<title>AQI Prediction Model · Group 14</title>
+<title>AQI Prediction Model · Vidhaan Mathur</title>
 <style>
 :root{--bg:#05080f;--ink:#e7f1ff;--mut:#8fa3c0;--glass:rgba(16,26,46,.55);--line:rgba(110,200,255,.18);--c1:#22e6ff;--c2:#8a5cff;--c3:#ff4fd8;--ok:#39ffb0;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -77,15 +77,16 @@ footer{padding:40px 0;text-align:center;color:var(--mut);font-size:13px;border-t
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.ring .p{stroke-dashoffset:var(--off)}.bar i{width:var(--w)}}
 </style></head><body>
 <canvas id="bg"></canvas><div id="glow"></div><div id="bar"></div>
-<nav><div class="wrap"><b class="mono">AQI<i>_</i>NET</b><a href="#data">Dataset</a><a href="#method">Method</a><a href="#results">Results</a><a href="#insights">Insights</a><a href="#team">Team</a></div></nav>
+<nav><div class="wrap"><b class="mono">AQI<i>_</i>NET</b><a href="#data">Dataset</a><a href="#method">Method</a><a href="#results">Results</a><a href="#insights">Insights</a></div></nav>
 
 <div class="wrap"><header>
 <div>
-<span class="chip mono">BASF · GROUP 14 · SYSTEM ONLINE</span>
+<span class="chip mono">AI FOR ENGINEERS · SYSTEM ONLINE</span>
 <h1>Predicting the air we breathe with <span class="grad">machine learning</span></h1>
 <p class="lead">A supervised regression model that forecasts the Air Quality Index from pollutants and weather: PM2.5, PM10, NO₂, SO₂, CO, O₃, temperature, humidity and more.</p>
 <div class="type mono" id="type"></div>
 <a class="btn" href="#results">Explore the results →</a>
+<p class="mono" style="color:var(--mut);font-size:13px;margin-top:18px">Built by <b style="color:var(--ink)">Vidhaan Mathur</b> · AI for Engineers project</p>
 </div>
 <div class="gauge">
 <svg viewBox="0 0 200 120"><defs><linearGradient id="gg" x1="0" x2="1"><stop offset="0" stop-color="#39ffb0"/><stop offset=".35" stop-color="#ffe14f"/><stop offset=".7" stop-color="#ff8a3d"/><stop offset="1" stop-color="#ff3d6e"/></linearGradient></defs>
@@ -147,16 +148,7 @@ footer{padding:40px 0;text-align:center;color:var(--mut);font-size:13px;border-t
 <div class="glass rv"><h3>Next up</h3><ul><li>Validate across cities and seasons.</li><li>Add lag features to move from nowcasting to forecasting.</li></ul></div>
 </div></div></section>
 
-<section id="team"><div class="wrap">
-<div class="eyebrow mono rv">// 05 TEAM</div><h2 class="rv">Group 14</h2><p class="sub rv">The people behind the model.</p>
-<div class="team">
-<div class="glass rv"><div class="av"><span>HK</span></div><b>Harsimrat Kaur Kang</b><small class="mono">1025050134</small></div>
-<div class="glass rv"><div class="av"><span>BS</span></div><b>Bhuvi Sharma</b><small class="mono">1025050031</small></div>
-<div class="glass rv"><div class="av"><span>TY</span></div><b>Tanishka Yadav</b><small class="mono">1025050006</small></div>
-<div class="glass rv"><div class="av"><span>DK</span></div><b>Dev Kukreja</b><small class="mono">1025050126</small></div>
-<div class="glass rv"><div class="av"><span>VM</span></div><b>Vidhaan Mathur</b><small class="mono">1025050137</small></div>
-</div></div></section>
-<footer class="mono">AQI_PREDICTION_MODEL · BASF GROUP 14 · DATA: KAGGLE URBANAIRNET</footer>
+<footer class="mono">BUILT BY VIDHAAN MATHUR · AI FOR ENGINEERS PROJECT · DATA: KAGGLE URBANAIRNET</footer>
 
 <script>
 (function(){

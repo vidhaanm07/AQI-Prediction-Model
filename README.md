@@ -1,4 +1,4 @@
-# AQI Prediction Model · Group 14 (BASF)
+# AQI Prediction Model
 
 A static, single-page website presenting our supervised machine-learning project that predicts the Air Quality Index (AQI) from pollutant and weather data.
 
@@ -6,6 +6,9 @@ A static, single-page website presenting our supervised machine-learning project
 - **Models:** Linear Regression, Random Forest Regressor (n_estimators=100, random_state=42), 80/20 train-test split
 - **Results:** Linear Regression RMSE 0.1713, R² 0.9997 (best); Random Forest RMSE 0.2466, R² 0.9995
 - **Key finding:** PM2.5 is the dominant driver of AQI (~88% feature importance)
+
+## Author
+Built by **Vidhaan Mathur** for the AI for Engineers project.
 
 ## Project structure
 ```
