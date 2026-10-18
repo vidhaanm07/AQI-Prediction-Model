@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="AQI Prediction Model by BASF Group 14: Linear Regression and Random Forest predicting Air Quality Index with R² up to 0.9997 on 175,205 hourly samples.">
+<meta name="theme-color" content="#05080f">
+<meta property="og:title" content="AQI Prediction Model · Group 14">
+<meta property="og:description" content="Machine-learning AQI prediction from pollutant and weather data. R² 0.9997.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>AQI Prediction Model · Group 14</title>
+<style>
+:root{--bg:#05080f;--ink:#e7f1ff;--mut:#8fa3c0;--glass:rgba(16,26,46,.55);--line:rgba(110,200,255,.18);--c1:#22e6ff;--c2:#8a5cff;--c3:#ff4fd8;--ok:#39ffb0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#eef3fb;--ink:#0b1630;--mut:#4a5d7d;--glass:rgba(255,255,255,.7);--line:rgba(30,80,160,.22);--c1:#0087b8;--c2:#5b34d6;--c3:#c4199e;--ok:#0a9a64}}
+:root[data-theme="light"]{--bg:#eef3fb;--ink:#0b1630;--mut:#4a5d7d;--glass:rgba(255,255,255,.7);--line:rgba(30,80,160,.22);--c1:#0087b8;--c2:#5b34d6;--c3:#c4199e;--ok:#0a9a64}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;overflow-x:hidden}
+.mono{font-family:ui-monospace,"SF Mono",Consolas,monospace}
+#bg{position:fixed;inset:0;z-index:-2;width:100%;height:100%}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(var(--line) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/48px 48px;opacity:.35;mask-image:radial-gradient(ellipse at 50% 30%,#000 10%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 10%,transparent 70%)}
+#glow{position:fixed;width:420px;height:420px;border-radius:50%;pointer-events:none;z-index:-1;background:radial-gradient(circle,color-mix(in srgb,var(--c2) 30%,transparent),transparent 65%);transform:translate(-50%,-50%);left:50%;top:30%;transition:left .25s,top .25s}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+nav{position:sticky;top:0;z-index:9;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 60%,transparent);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:20px;align-items:center;height:56px;overflow-x:auto;white-space:nowrap}
+nav b{margin-right:auto;letter-spacing:.14em;font-size:13px}nav b i{color:var(--c1);font-style:normal;text-shadow:0 0 12px var(--c1)}
+nav a{color:var(--mut);text-decoration:none;font-size:13px;letter-spacing:.08em;text-transform:uppercase;transition:.2s}nav a:hover{color:var(--c1);text-shadow:0 0 10px var(--c1)}
+#bar{position:fixed;top:0;left:0;height:3px;width:0;z-index:20;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3));box-shadow:0 0 12px var(--c1)}
+header{padding:90px 0 60px;display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:center}
+.chip{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:var(--glass);padding:6px 14px;border-radius:99px;font-size:12px;letter-spacing:.14em;color:var(--c1)}
+.chip::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok);animation:pulse 1.6s infinite}
+h1{font-size:clamp(36px,6.4vw,70px);line-height:1.04;margin:20px 0;letter-spacing:-.03em}
+.grad{background:linear-gradient(100deg,var(--c1),var(--c2),var(--c3),var(--c1));background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shift 6s linear infinite}
+.lead{color:var(--mut);font-size:18px;max-width:600px}
+.type{color:var(--ok);min-height:1.7em;margin-top:14px}.type::after{content:"▍";animation:blink 1s steps(1) infinite}
+.btn{display:inline-block;margin-top:24px;padding:13px 26px;border-radius:12px;color:#fff;text-decoration:none;font-weight:600;background:linear-gradient(120deg,var(--c2),var(--c3));box-shadow:0 0 26px color-mix(in srgb,var(--c2) 55%,transparent);transition:.25s}
+.btn:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 0 40px var(--c3)}
+.gauge{position:relative;text-align:center}.gauge svg{width:100%;max-width:340px;filter:drop-shadow(0 0 18px color-mix(in srgb,var(--c1) 45%,transparent))}
+.gauge .val{position:absolute;left:0;right:0;top:46%;font-size:54px;font-weight:700}.gauge .cat{position:absolute;left:0;right:0;top:72%;font-size:12px;letter-spacing:.18em;color:var(--mut)}
+.gauge small{display:block;color:var(--mut);font-size:11px;margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:30px}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:18px;padding:22px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);position:relative;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s}
+.glass::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),color-mix(in srgb,var(--c1) 22%,transparent),transparent 60%);opacity:0;transition:opacity .3s}
+.glass:hover{border-color:var(--c1);box-shadow:0 0 30px color-mix(in srgb,var(--c1) 25%,transparent);transform:translateY(-4px)}.glass:hover::before{opacity:1}
+.glass>*{position:relative}
+.stat b{display:block;font-size:34px;color:var(--c1);text-shadow:0 0 18px color-mix(in srgb,var(--c1) 60%,transparent)}.stat span{color:var(--mut);font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+section{padding:56px 0}.eyebrow{color:var(--c1);font-size:12px;letter-spacing:.24em}
+h2{font-size:clamp(28px,4vw,42px);margin:6px 0 8px;letter-spacing:-.02em}.sub{color:var(--mut);margin:0 0 28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.glass h3{margin:0 0 8px;font-size:18px}.glass p,.glass li{color:var(--mut);margin:6px 0}.glass ul{padding-left:18px;margin:0}.glass a{color:var(--c1)}
+.pipe{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;counter-reset:s}
+.pipe div{counter-increment:s;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--glass);font-size:14px;position:relative}
+.pipe div::before{content:"0" counter(s);display:block;font-family:ui-monospace,Consolas,monospace;color:var(--c1);font-size:12px;margin-bottom:4px}
+.pipe div::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;background:linear-gradient(90deg,var(--c1),var(--c3));animation:fill 1.2s forwards;animation-play-state:paused;animation-delay:calc(var(--i)*.15s)}
+.in .pipe div::after{animation-play-state:running}
+.models{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.model{text-align:center}.model.best{border-color:var(--ok);box-shadow:0 0 34px color-mix(in srgb,var(--ok) 30%,transparent)}
+.ring{width:150px;height:150px;margin:6px auto 10px;position:relative}.ring svg{transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:9;stroke-linecap:round}.ring .t{stroke:var(--line)}.ring .p{stroke:url(#rg);stroke-dasharray:314;stroke-dashoffset:314;transition:stroke-dashoffset 1.8s cubic-bezier(.2,.8,.2,1)}
+.in .ring .p{stroke-dashoffset:var(--off)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:22px}
+.badge{display:inline-block;background:var(--ok);color:#022;font-size:11px;font-weight:700;letter-spacing:.12em;padding:3px 10px;border-radius:99px;margin-bottom:8px}
+.kv{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding:10px 0 0;margin-top:10px;font-size:14px;color:var(--mut)}.kv b{color:var(--ink)}
+.bar{display:grid;grid-template-columns:110px 1fr 54px;gap:12px;align-items:center;margin:12px 0;font-size:14px}
+.bar div{height:12px;border-radius:8px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:8px;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3));box-shadow:0 0 14px var(--c1);transition:width 1.6s cubic-bezier(.2,.8,.2,1)}
+.in .bar i{width:var(--w)}.bar em{font-style:normal;text-align:right;color:var(--c1)}
+.note{font-size:12px;color:var(--mut);margin-top:10px}
+.team{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.team .glass{text-align:center}.av{width:54px;height:54px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;font-weight:700;background:conic-gradient(from 0deg,var(--c1),var(--c2),var(--c3),var(--c1));color:#fff;animation:spin 8s linear infinite;position:relative}
+.av span{position:absolute;inset:3px;border-radius:50%;background:var(--bg);display:grid;place-items:center;animation:spinr 8s linear infinite}
+.team b{display:block}.team small{color:var(--mut)}
+footer{padding:40px 0;text-align:center;color:var(--mut);font-size:13px;border-top:1px solid var(--line)}
+.rv{opacity:0;transform:translateY(34px);transition:opacity .8s,transform .8s}.in .rv,.rv.in{opacity:1;transform:none}
+@keyframes shift{to{background-position:250% 0}}@keyframes blink{50%{opacity:0}}@keyframes pulse{50%{opacity:.35}}
+@keyframes fill{to{width:100%}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes spinr{to{transform:rotate(-360deg)}}
+@media (max-width:820px){header{grid-template-columns:1fr;padding-top:60px}.bar{grid-template-columns:80px 1fr 46px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.ring .p{stroke-dashoffset:var(--off)}.bar i{width:var(--w)}}
+</style></head><body>
+<canvas id="bg"></canvas><div id="glow"></div><div id="bar"></div>
+<nav><div class="wrap"><b class="mono">AQI<i>_</i>NET</b><a href="#data">Dataset</a><a href="#method">Method</a><a href="#results">Results</a><a href="#insights">Insights</a><a href="#team">Team</a></div></nav>
+
+<div class="wrap"><header>
+<div>
+<span class="chip mono">BASF · GROUP 14 · SYSTEM ONLINE</span>
+<h1>Predicting the air we breathe with <span class="grad">machine learning</span></h1>
+<p class="lead">A supervised regression model that forecasts the Air Quality Index from pollutants and weather: PM2.5, PM10, NO₂, SO₂, CO, O₃, temperature, humidity and more.</p>
+<div class="type mono" id="type"></div>
+<a class="btn" href="#results">Explore the results →</a>
+</div>
+<div class="gauge">
+<svg viewBox="0 0 200 120"><defs><linearGradient id="gg" x1="0" x2="1"><stop offset="0" stop-color="#39ffb0"/><stop offset=".35" stop-color="#ffe14f"/><stop offset=".7" stop-color="#ff8a3d"/><stop offset="1" stop-color="#ff3d6e"/></linearGradient></defs>
+<path d="M20 105 A80 80 0 0 1 180 105" fill="none" stroke="var(--line)" stroke-width="12" stroke-linecap="round"/>
+<path id="arc" d="M20 105 A80 80 0 0 1 180 105" fill="none" stroke="url(#gg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="252" stroke-dashoffset="252" style="transition:stroke-dashoffset 1.4s ease"/></svg>
+<div class="val mono" id="gv">0</div><div class="cat mono" id="gc">AQI</div>
+<small class="mono">Illustrative AQI scale, not live model output</small>
+</div></header></div>
+
+<div class="wrap"><div class="stats">
+<div class="glass stat rv"><b class="cnt" data-to="175205">0</b><span>Hourly samples</span></div>
+<div class="glass stat rv"><b class="cnt" data-to="12">0</b><span>Input features</span></div>
+<div class="glass stat rv"><b class="cnt" data-to="0.9997" data-d="4">0</b><span>Best R² score</span></div>
+<div class="glass stat rv"><b class="cnt" data-to="88" data-s="%">0</b><span>PM2.5 importance</span></div>
+</div></div>
+
+<section id="data"><div class="wrap">
+<div class="eyebrow mono rv">// 01 DATASET</div><h2 class="rv">Hourly urban air, 175K readings deep</h2><p class="sub rv">Pollution and weather observations from monitoring stations.</p>
+<div class="grid">
+<div class="glass rv"><h3>Source</h3><p>UrbanAirNet: Urban Air Quality and Weather Dataset on Kaggle.</p><p><a href="https://www.kaggle.com/datasets/ziya07/urbanairnet-urban-air-quality-and-weather-dataset" target="_blank" rel="noopener">Open on Kaggle ↗</a></p></div>
+<div class="glass rv"><h3>Inputs &amp; target</h3><p>12 features: PM2.5, PM10, NO₂, SO₂, CO, O₃, temperature, humidity, pressure, wind speed and direction, rainfall. Target: <b>AQI_Target</b>.</p></div>
+<div class="glass rv"><h3>Data quality</h3><p>No missing values or duplicates, so no imputation was needed. Inputs were standardised with <b>StandardScaler</b>.</p></div>
+</div></div></section>
+
+<section id="method"><div class="wrap">
+<div class="eyebrow mono rv">// 02 METHOD</div><h2 class="rv">The pipeline</h2><p class="sub rv">From raw sensor data to the selected model.</p>
+<div class="rv"><div class="pipe">
+<div style="--i:0">Data Collection</div><div style="--i:1">Pre-processing</div><div style="--i:2">EDA</div><div style="--i:3">Feature Selection</div><div style="--i:4">Train–Test Split</div><div style="--i:5">Model Development</div><div style="--i:6">Evaluation</div><div style="--i:7">Best Model</div><div style="--i:8">AQI Prediction</div><div style="--i:9">Results</div></div></div>
+<div class="grid" style="margin-top:20px">
+<div class="glass rv"><h3>Linear Regression</h3><ul><li>Default settings, no tuning</li><li>Interpretable baseline</li><li>Tests if AQI is linear in the inputs</li></ul></div>
+<div class="glass rv"><h3>Random Forest</h3><ul><li>n_estimators = 100, random_state = 42</li><li>Captures non-linear interactions</li><li>Ranks feature importance</li></ul></div>
+<div class="glass rv"><h3>Setup</h3><ul><li>80% train / 20% test</li><li>scikit-learn</li><li>Compared on RMSE and R²</li></ul></div>
+</div></div></section>
+
+<section id="results"><div class="wrap">
+<div class="eyebrow mono rv">// 03 RESULTS</div><h2 class="rv">Both models exceed 99.9% fit</h2><p class="sub rv">Linear Regression edges ahead with the lowest RMSE and highest R².</p>
+<div class="models rv">
+<div class="glass model best"><span class="badge">BEST MODEL</span><h3>Linear Regression</h3>
+<div class="ring"><svg viewBox="0 0 120 120" width="150" height="150"><defs><linearGradient id="rg"><stop offset="0" stop-color="#22e6ff"/><stop offset="1" stop-color="#ff4fd8"/></linearGradient></defs><circle class="t" cx="60" cy="60" r="50"/><circle class="p" cx="60" cy="60" r="50" style="--off:.1"/></svg><b class="mono">0.9997</b></div>
+<div class="kv"><span>R²</span><b>0.9997</b></div><div class="kv"><span>RMSE</span><b>0.1713</b></div></div>
+<div class="glass model"><span class="badge" style="background:var(--c2);color:#fff">ENSEMBLE</span><h3>Random Forest</h3>
+<div class="ring"><svg viewBox="0 0 120 120" width="150" height="150"><circle class="t" cx="60" cy="60" r="50"/><circle class="p" cx="60" cy="60" r="50" style="--off:.16"/></svg><b class="mono">0.9995</b></div>
+<div class="kv"><span>R²</span><b>0.9995</b></div><div class="kv"><span>RMSE</span><b>0.2466</b></div></div>
+</div>
+<p class="note mono rv">Random Forest predicted vs. actual AQI tracks the diagonal tightly, confirming a strong fit.</p>
+</div></section>
+
+<section id="insights"><div class="wrap">
+<div class="eyebrow mono rv">// 04 INSIGHTS</div><h2 class="rv">PM2.5 runs the show</h2><p class="sub rv">Random Forest feature importance.</p>
+<div class="glass rv">
+<div class="bar"><span>PM2.5</span><div><i style="--w:88%"></i></div><em class="mono">~88%</em></div>
+<div class="bar"><span>NO₂</span><div><i style="--w:8%"></i></div><em class="mono">~8%</em></div>
+<div class="bar"><span>O₃</span><div><i style="--w:3.5%"></i></div><em class="mono">~3%</em></div>
+<div class="bar"><span>Other 9</span><div><i style="--w:.6%"></i></div><em class="mono">&lt;1%</em></div>
+<p class="note">NO₂ and O₃ values are read from the project’s Random Forest chart; PM2.5 (~88%) is from the report.</p></div>
+<div class="grid" style="margin-top:16px">
+<div class="glass rv"><h3>Key findings</h3><ul><li>Sensor and weather data predict AQI reliably (R² &gt; 99.9%).</li><li>PM2.5 dominates, consistent with how AQI is computed.</li></ul></div>
+<div class="glass rv"><h3>Engineering value</h3><ul><li>Low-cost monitoring with just PM2.5, NO₂ and O₃ sensors.</li><li>Real-time alerts and smart-city dashboards.</li><li>Target traffic and industrial emissions.</li></ul></div>
+<div class="glass rv"><h3>Next up</h3><ul><li>Validate across cities and seasons.</li><li>Add lag features to move from nowcasting to forecasting.</li></ul></div>
+</div></div></section>
+
+<section id="team"><div class="wrap">
+<div class="eyebrow mono rv">// 05 TEAM</div><h2 class="rv">Group 14</h2><p class="sub rv">The people behind the model.</p>
+<div class="team">
+<div class="glass rv"><div class="av"><span>HK</span></div><b>Harsimrat Kaur Kang</b><small class="mono">1025050134</small></div>
+<div class="glass rv"><div class="av"><span>BS</span></div><b>Bhuvi Sharma</b><small class="mono">1025050031</small></div>
+<div class="glass rv"><div class="av"><span>TY</span></div><b>Tanishka Yadav</b><small class="mono">1025050006</small></div>
+<div class="glass rv"><div class="av"><span>DK</span></div><b>Dev Kukreja</b><small class="mono">1025050126</small></div>
+<div class="glass rv"><div class="av"><span>VM</span></div><b>Vidhaan Mathur</b><small class="mono">1025050137</small></div>
+</div></div></section>
+<footer class="mono">AQI_PREDICTION_MODEL · BASF GROUP 14 · DATA: KAGGLE URBANAIRNET</footer>
+
+<script>
+(function(){
+var rm=matchMedia("(prefers-reduced-motion:reduce)").matches;
+// particle field
+var cv=document.getElementById("bg"),cx=cv.getContext("2d"),P=[],W,H,mx=-999,my=-999;
+function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;P=[];var n=Math.min(90,Math.floor(W*H/18000));for(var i=0;i<n;i++)P.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.6+.6})}
+rs();addEventListener("resize",rs);
+addEventListener("pointermove",function(e){mx=e.clientX;my=e.clientY;var g=document.getElementById("glow");g.style.left=mx+"px";g.style.top=my+"px"});
+function col(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||"#22e6ff"}
+function draw(){var c=col("--c1");cx.clearRect(0,0,W,H);
+for(var i=0;i<P.length;i++){var a=P[i];if(!rm){a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>W)a.vx*=-1;if(a.y<0||a.y>H)a.vy*=-1}
+cx.fillStyle=c;cx.globalAlpha=.7;cx.beginPath();cx.arc(a.x,a.y,a.r,0,6.3);cx.fill();
+for(var j=i+1;j<P.length;j++){var b=P[j],d=Math.hypot(a.x-b.x,a.y-b.y);if(d<120){cx.globalAlpha=(1-d/120)*.35;cx.strokeStyle=c;cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.stroke()}}
+var dm=Math.hypot(a.x-mx,a.y-my);if(dm<160){cx.globalAlpha=(1-dm/160)*.6;cx.strokeStyle=col("--c3");cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(mx,my);cx.stroke()}}
+if(!rm)requestAnimationFrame(draw)}
+draw();
+// typing
+var lines=["> loading UrbanAirNet dataset ... 175,205 rows","> training LinearRegression + RandomForest","> R² = 0.9997 · status: OK"],el=document.getElementById("type"),li=0,ci=0;
+function ty(){if(rm){el.textContent=lines[2];return}var t=lines[li];el.textContent=t.slice(0,ci++);if(ci<=t.length)setTimeout(ty,38);else{ci=0;li=(li+1)%lines.length;setTimeout(ty,1500)}}ty();
+// gauge
+var cats=[[25,"GOOD","#39ffb0"],[50,"MODERATE","#ffe14f"],[75,"UNHEALTHY","#ff8a3d"],[100,"HAZARDOUS","#ff3d6e"]],gi=0,arc=document.getElementById("arc"),gv=document.getElementById("gv"),gc=document.getElementById("gc");
+function setG(v){arc.style.strokeDashoffset=252-252*v/100;var k=cats.find(function(c){return v<=c[0]})||cats[3];gc.textContent=k[1];gc.style.color=k[2];var s=+gv.textContent,t=0;var iv=setInterval(function(){t+=.05;gv.textContent=Math.round(s+(v-s)*Math.min(t,1));if(t>=1)clearInterval(iv)},28)}
+var seq=[18,42,64,88];setTimeout(function(){setG(seq[0])},400);if(!rm)setInterval(function(){gi=(gi+1)%seq.length;setG(seq[gi])},3200);
+// reveal + counters
+function cnt(e){var to=+e.dataset.to,d=+e.dataset.d||0,s=e.dataset.s||"",t0=performance.now();(function f(n){var p=Math.min((n-t0)/1600,1),v=to*(1-Math.pow(1-p,3));e.textContent=(d?v.toFixed(d):Math.round(v).toLocaleString("en-US"))+s;if(p<1&&!rm)requestAnimationFrame(f);else e.textContent=(d?to.toFixed(d):to.toLocaleString("en-US"))+s})(t0)}
+var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add("in");x.target.querySelectorAll(".cnt").forEach(cnt);if(x.target.classList.contains("cnt"))cnt(x.target);io.unobserve(x.target)}})},{threshold:.15});
+document.querySelectorAll(".rv,section").forEach(function(e,i){e.style.transitionDelay=e.classList.contains("rv")?(i%4)*.08+"s":"";io.observe(e)});
+// card spotlight + scroll bar
+document.querySelectorAll(".glass").forEach(function(c){c.addEventListener("pointermove",function(e){var r=c.getBoundingClientRect();c.style.setProperty("--mx",e.clientX-r.left+"px");c.style.setProperty("--my",e.clientY-r.top+"px")})});
+var bar=document.getElementById("bar");addEventListener("scroll",function(){bar.style.width=scrollY/(document.documentElement.scrollHeight-innerHeight)*100+"%"},{passive:true});
+})();
+</script></body></html>
